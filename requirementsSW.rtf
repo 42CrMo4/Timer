@@ -12,11 +12,9 @@ Going to sleep:\
 - Always if idl (no timer, stopwatch running) go to sleep after \'84idl_timeout\'93 in sec after the last input\
 	- The  \'84idl_timeout\'93 should be configurable at the beginning of the sketch\
 \
-\
-\
 Timer funktion:\
 - input time in format hh:mm:ss but start with the right most digit (s) and shift then to the left. \
-	- example input 13min and 25sec\
+	- example: input 13min and 25sec\
 		- 00:00:00 (start frame)\
 		- 00:00:01 (enter 1)\
 		- 00:00:13 (enter 3)\
@@ -28,13 +26,13 @@ Timer funktion:\
 	- (optional) OLED should show a hourglass symbol before time\
 \pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
 \cf0 - If running Pause Timer with press on Start Key (Flag ButtonStart)\
+	- (optional) OLED should not show a hourglass symbol before time\
 - Reset Timer by pressing Reset Key (Flag ButtonReset)\
 	- if running or in paused mode rest to the last input time (example from bevor 13:25)\
 		- if reseted again then go to 00:00:00\
 	- in input mode reset to 00:00:00\
-	\
 - If Time reaches 00:00:00 \
-	- the buzzer (Flag buzzer) should sound. \
+	- the buzzer (Flag Buzzer) should sound. \
 		- The frequency should be configurable at the beginning of the sketch\
 		- The duration should be configurable at the beginning of the sketch\
 	- (optional) the display should invert the colors 5 times (to have a blinking effect)\
@@ -50,6 +48,10 @@ Stopwatch funktion:\
 - Reset stopwatch if running or in paused mode by pressing Reset Key (Flag ButtonReset)\
 \
 Generell Concept:\
+- Arduino IDE\
+- Microcontroller Attiny1616\
+- use megaTinyCore (https://github.com/SpenceKonde/megaTinyCore) \
+- No floating pins in sleep mode (https://github.com/SpenceKonde/megaTinyCore/blob/master/megaavr/extras/PowerSave.md#unused-pins-and-sleep-modes)\
 - only open source Libraries\
 - if possible good maintained Libraries\
 - functions without delay \

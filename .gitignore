@@ -24,3 +24,6 @@ _autosave-*
 *.xml
 *.csv
 .DS_Store
+Timer.png
+Printing Print Schematic.pdf
+bom/ibom.html
