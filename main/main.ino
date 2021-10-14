@@ -39,6 +39,8 @@ unsigned long startMillis;  //some global variables available anywhere in the pr
 unsigned long currentMillis;
 const unsigned long period = 1000;  //the value is a number of milliseconds
 
+bool countown_done = false;
+
 void setup() {
   pinConfigure(PIN_PC0, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PC3, (PIN_DIR_INPUT | PIN_PULLUP_ON));
@@ -65,25 +67,26 @@ void loop() {
     number();
   }
   if (button2.isReleased()) {
-    x = 2;
-    start_timer();
+    if (hms > 0) {
+      start_timer();
+    }
+    if (hms == 0) {
+      countup();
+    }
   }
   if (buttonReset.isReleased()) {
-    x = 0;
-    h2 = 0;
-    h1 = 0;
-    m2 = 0;
-    m1 = 0;
-    s2 = 0;
-    s1 = 0;
-    u8x8.clearDisplay();
-    print_oled();
+    reset_button();
   }
 }
 
 void print_oled() {
   u8x8.setCursor(0, 0);
   u8x8.setFont(u8x8_font_courB24_3x4_n);
+  if (countown_done == true){
+    u8x8.setCursor(1, 1);
+    u8x8.setFont(u8x8_font_courB18_2x3_n);
+    u8x8.print("-");
+  }
   if (h2 > 0 || h1 > 0) {
     u8x8.setCursor(0, 1);
     //    u8x8.setFont(u8x8_font_7x14B_1x2_n);
@@ -107,49 +110,47 @@ void number() {
   m1 = s2;
   s2 = s1;
   s1 = x;
+  hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
   print_oled();
 }
 
-void counter() {
-  hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
-  hms = hms - 1;
-  h = hms / 3600;
-  h2 = h / 10;
-  h1 = h % 10;
-  ms = hms % 3600;
-  m = ms / 60;
-  m2 = m / 10;
-  m1 = m % 10;
-  s = ms % 60;
-  s2 = s / 10;
-  s1 = s % 10;
+void counter(int k) {
+  currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
+  if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+  {
+    startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+    hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
+    hms = hms + k;
+    h = hms / 3600;
+    h2 = h / 10;
+    h1 = h % 10;
+    ms = hms % 3600;
+    m = ms / 60;
+    m2 = m / 10;
+    m1 = m % 10;
+    s = ms % 60;
+    s2 = s / 10;
+    s1 = s % 10;
+    print_oled();
+  }
 }
 
+// >
+
 void start_timer() {
-  hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
-  while (hms > 0) {
+  buttonReset.loop();
+  while (buttonReset.isReleased() == false ) {
     buttonReset.loop();
     if (buttonReset.isReleased()) {
-      x = 0;
-      h2 = 0;
-      h1 = 0;
-      m2 = 0;
-      m1 = 0;
-      s2 = 0;
-      s1 = 0;
+      reset_button();
+      return;
+    }
+    counter(-1);
+    if (hms == 0){
+      countown_done = true;
       u8x8.clearDisplay();
-      print_oled();
+      countup();
     }
-    currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
-    if (currentMillis - startMillis >= period)  //test whether the period has elapsed
-    {
-      counter();
-      startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
-      print_oled();
-    }
-  }
-  if ( hms == 0) {
-    countup();
   }
 }
 
@@ -158,34 +159,23 @@ void countup() {
   while (buttonReset.isReleased() == false ) {
     buttonReset.loop();
     if (buttonReset.isReleased()) {
-      x = 0;
-      h2 = 0;
-      h1 = 0;
-      m2 = 0;
-      m1 = 0;
-      s2 = 0;
-      s1 = 0;
-      u8x8.clearDisplay();
-      print_oled();
+      reset_button();
       return;
     }
-    currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
-    if (currentMillis - startMillis >= period)  //test whether the period has elapsed
-    {
-      startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
-      hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
-      hms = hms + 1;
-      h = hms / 3600;
-      h2 = h / 10;
-      h1 = h % 10;
-      ms = hms % 3600;
-      m = ms / 60;
-      m2 = m / 10;
-      m1 = m % 10;
-      s = ms % 60;
-      s2 = s / 10;
-      s1 = s % 10;
-      print_oled();
-    }
+    counter(+1);
   }
+}
+
+void reset_button() {
+  x = 0;
+  hms = 0;
+  h2 = 0;
+  h1 = 0;
+  m2 = 0;
+  m1 = 0;
+  s2 = 0;
+  s1 = 0;
+  countown_done = false;
+  u8x8.clearDisplay();
+  print_oled();
 }
