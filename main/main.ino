@@ -149,6 +149,18 @@ void counter() {
 
 void start_timer() {
   while (h2 > 0 || h1 > 0 || m2 > 0 || m1 > 0 || s2 > 0 || s1 > 0) {
+    buttonReset.loop();
+    if (buttonReset.isReleased()) {
+      x = 0;
+      h2 = 0;
+      h1 = 0;
+      m2 = 0;
+      m1 = 0;
+      s2 = 0;
+      s1 = 0;
+      u8x8.clearDisplay();
+      print_oled();
+    }
     currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
     if (currentMillis - startMillis >= period)  //test whether the period has elapsed
     {
