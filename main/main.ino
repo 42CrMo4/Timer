@@ -29,6 +29,11 @@ int s1 = 0;
 int s2 = 0;
 
 int x = 0;
+int hms = 0;
+int ms = 0;
+int s = 0;
+int h = 0;
+int m = 0;
 
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
@@ -106,49 +111,23 @@ void number() {
 }
 
 void counter() {
-  if (s1 > 0) {
-    s1 = s1 - 1;
-    return;
-  }
-  if (s1 == 0) {
-    if (s2 > 0) {
-      s1 = 9;
-      s2 = s2 - 1;
-      return;
-    }
-    if (s2 == 0) {
-      if (m1 > 0) {
-        s2 = 5;
-        m1 = m1 - 1;
-        return;
-      }
-      if (m1 == 0) {
-        if (m2 > 0) {
-          m1 = 9;
-          m2 = m2 - 1;
-          return;
-        }
-        if (m2 == 0) {
-          if (h1 > 0) {
-            m2 = 6;
-            h1 = h1 - 1;
-            return;
-          }
-          if (h1 == 0) {
-            if (h2 > 0) {
-              h1 = 9;
-              h2 = h2 - 1;
-              return;
-            }
-          }
-        }
-      }
-    }
-  }
+  hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
+  hms = hms - 1;
+  h = hms / 3600;
+  h2 = h / 10;
+  h1 = h % 10;
+  ms = hms % 3600;
+  m = ms / 60;
+  m2 = m / 10;
+  m1 = m % 10;
+  s = ms % 60;
+  s2 = s / 10;
+  s1 = s % 10;
 }
 
 void start_timer() {
-  while (h2 > 0 || h1 > 0 || m2 > 0 || m1 > 0 || s2 > 0 || s1 > 0) {
+  hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
+  while (hms > 0) {
     buttonReset.loop();
     if (buttonReset.isReleased()) {
       x = 0;
@@ -166,6 +145,46 @@ void start_timer() {
     {
       counter();
       startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+      print_oled();
+    }
+  }
+  if ( hms == 0) {
+    countup();
+  }
+}
+
+void countup() {
+  buttonReset.loop();
+  while (buttonReset.isReleased() == false ) {
+    buttonReset.loop();
+    if (buttonReset.isReleased()) {
+      x = 0;
+      h2 = 0;
+      h1 = 0;
+      m2 = 0;
+      m1 = 0;
+      s2 = 0;
+      s1 = 0;
+      u8x8.clearDisplay();
+      print_oled();
+      return;
+    }
+    currentMillis = millis();  //get the current "time" (actually the number of milliseconds since the program started)
+    if (currentMillis - startMillis >= period)  //test whether the period has elapsed
+    {
+      startMillis = currentMillis;  //IMPORTANT to save the start time of the current LED state.
+      hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
+      hms = hms + 1;
+      h = hms / 3600;
+      h2 = h / 10;
+      h1 = h % 10;
+      ms = hms % 3600;
+      m = ms / 60;
+      m2 = m / 10;
+      m1 = m % 10;
+      s = ms % 60;
+      s2 = s / 10;
+      s1 = s % 10;
       print_oled();
     }
   }
