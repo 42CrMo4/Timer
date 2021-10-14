@@ -40,6 +40,7 @@ unsigned long currentMillis;
 const unsigned long period = 1000;  //the value is a number of milliseconds
 
 bool countown_done = false;
+bool reset_yes = false;
 
 void setup() {
   pinConfigure(PIN_PC0, (PIN_DIR_INPUT | PIN_PULLUP_ON));
@@ -67,6 +68,7 @@ void loop() {
     number();
   }
   if (button2.isReleased()) {
+    reset_yes = false;
     if (hms > 0) {
       start_timer();
     }
@@ -138,12 +140,10 @@ void counter(int k) {
 // >
 
 void start_timer() {
-  buttonReset.loop();
-  while (buttonReset.isReleased() == false ) {
+  while (reset_yes == false ) {
     buttonReset.loop();
     if (buttonReset.isReleased()) {
       reset_button();
-      return;
     }
     counter(-1);
     if (hms == 0){
@@ -155,12 +155,10 @@ void start_timer() {
 }
 
 void countup() {
-  buttonReset.loop();
-  while (buttonReset.isReleased() == false ) {
+  while (reset_yes == false ) {
     buttonReset.loop();
     if (buttonReset.isReleased()) {
       reset_button();
-      return;
     }
     counter(+1);
   }
@@ -176,6 +174,7 @@ void reset_button() {
   s2 = 0;
   s1 = 0;
   countown_done = false;
+  reset_yes = true;
   u8x8.clearDisplay();
   print_oled();
 }
