@@ -1,11 +1,10 @@
 #include <U8x8lib.h> // https://github.com/olikraus/u8g2
 #include <ezButton.h>
 
+// setup the OLED
 U8X8_SSD1306_128X32_UNIVISION_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
 
-//int but1 = PIN_PC0;
-//int but2 = PIN_PC3;
-
+// Setup all Buttons
 ezButton button1(PIN_PC0);
 ezButton button2(PIN_PA5);
 ezButton button3(PIN_PB4);
@@ -19,9 +18,7 @@ ezButton button0(PIN_PA1);
 ezButton buttonStart(PIN_PC3);
 ezButton buttonReset(PIN_PA6);
 
-// hh:mm:ss
-// h2h1:m2m1:s2s1
-
+// int
 int h1 = 0;
 int h2 = 0;
 int m1 = 0;
@@ -36,14 +33,19 @@ int s = 0;
 int h = 0;
 int m = 0;
 
-unsigned long startMillis;  //some global variables available anywhere in the program
+// unsigned long 
+unsigned long startMillis;
 unsigned long currentMillis;
-const unsigned long period = 1000;  //the value is a number of milliseconds
 
+// Set Intervall
+const unsigned long period = 1000;
+
+// bool
 bool countown_done = false;
 bool reset_yes = false;
 
 void setup() {
+  // Pin configuration SetUp
   pinConfigure(PIN_PA1, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PA2, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PA3, (PIN_DIR_INPUT | PIN_PULLUP_ON));
@@ -56,14 +58,17 @@ void setup() {
   pinConfigure(PIN_PC1, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PC2, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PC3, (PIN_DIR_INPUT | PIN_PULLUP_ON));
-
   pinConfigure(PIN_PA4, (PIN_DIR_OUTPUT));
+  
   delay(100);
+  
+  // SetUp the Display
   u8x8.begin();
   u8x8.setFlipMode(0);
   u8x8.setFont(u8x8_font_courB24_3x4_n);
 
-  button1.setDebounceTime(50); // set debounce time to 50 milliseconds
+  // Set debounce time to 50 milliseconds for all buttons
+  button1.setDebounceTime(50); 
   button2.setDebounceTime(50);
   button3.setDebounceTime(50);
   button4.setDebounceTime(50);
@@ -76,11 +81,14 @@ void setup() {
   buttonStart.setDebounceTime(50);
   buttonReset.setDebounceTime(50);
 
-  startMillis = millis();  //initial start time
+  // initial start time
+  startMillis = millis();  
 }
 
 void loop() {
-  button1.loop(); // MUST call the loop() function first
+
+  // MUST call the loop() function first
+  button1.loop(); 
   button2.loop();
   button3.loop();
   button4.loop();
@@ -93,6 +101,7 @@ void loop() {
   buttonStart.loop();
   buttonReset.loop();
 
+  // See what button was pressed
   if (button1.isReleased()) {
     x = 1;
     number();
@@ -200,8 +209,6 @@ void counter(int k) {
     print_oled();
   }
 }
-
-// >
 
 void start_timer() {
   while (reset_yes == false ) {
