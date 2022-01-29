@@ -1,8 +1,12 @@
-#include <U8x8lib.h> // https://github.com/olikraus/u8g2
+//#include <U8x8lib.h> // https://github.com/olikraus/u8g2
 #include <ezButton.h>
+#include <tinyNeoPixel.h>
+#define NUMLEDS 22
+tinyNeoPixel leds = tinyNeoPixel(NUMLEDS, PIN_PB1, NEO_GRB);
+int start_led = 0;
 
 // setup the OLED
-U8X8_SSD1306_128X32_UNIVISION_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
+//U8X8_SSD1306_128X32_UNIVISION_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
 
 // Setup all Buttons
 ezButton button1(PIN_PC0);
@@ -61,11 +65,15 @@ void setup() {
   pinConfigure(PIN_PA4, (PIN_DIR_OUTPUT));
   
   delay(100);
+
+  leds.begin();
+  leds.clear();
+  leds.show();
   
   // SetUp the Display
-  u8x8.begin();
-  u8x8.setFlipMode(0);
-  u8x8.setFont(u8x8_font_courB24_3x4_n);
+//  u8x8.begin();
+//  u8x8.setFlipMode(0);
+//  u8x8.setFont(u8x8_font_courB24_3x4_n);
 
   // Set debounce time to 50 milliseconds for all buttons
   button1.setDebounceTime(50); 
@@ -155,27 +163,72 @@ void loop() {
 }
 
 void print_oled() {
-  u8x8.setCursor(0, 0);
-  u8x8.setFont(u8x8_font_courB24_3x4_n);
-  if (countown_done == true){
-    u8x8.setCursor(1, 1);
-    u8x8.setFont(u8x8_font_courB18_2x3_n);
-    u8x8.print("-");
+//  u8x8.setCursor(0, 0);
+//  u8x8.setFont(u8x8_font_courB24_3x4_n);
+//  if (countown_done == true){
+//    u8x8.setCursor(1, 1);
+//    u8x8.setFont(u8x8_font_courB18_2x3_n);
+//    u8x8.print("-");
+//  }
+//  if (h2 > 0 || h1 > 0) {
+//    u8x8.setCursor(0, 1);
+//    //    u8x8.setFont(u8x8_font_7x14B_1x2_n);
+//    u8x8.setFont(u8x8_font_courB18_2x3_n);
+//    u8x8.clearDisplay();
+//    u8x8.print(h2);
+//    u8x8.print(h1);
+//    u8x8.print(":");
+//  }
+//  u8x8.print(m2);
+//  u8x8.print(m1);
+//  u8x8.print(":");
+//  u8x8.print(s2);
+//  u8x8.print(s1);
+}
+
+void print_sevensegment() {
+  leds.clear();
+  start_led = 0;
+  numberTOsegment(s1);
+  start_led = 7;
+  numberTOsegment(s2);
+  start_led = 14;
+  numberTOsegment(m1);
+  leds.setPixelColor(21,200,0,0);
+  leds.show();
+}
+
+void numberTOsegment(int i){
+  if (i == 0 ) {
+    zero();
   }
-  if (h2 > 0 || h1 > 0) {
-    u8x8.setCursor(0, 1);
-    //    u8x8.setFont(u8x8_font_7x14B_1x2_n);
-    u8x8.setFont(u8x8_font_courB18_2x3_n);
-    u8x8.clearDisplay();
-    u8x8.print(h2);
-    u8x8.print(h1);
-    u8x8.print(":");
+  if (i == 1 ) {
+    one();
   }
-  u8x8.print(m2);
-  u8x8.print(m1);
-  u8x8.print(":");
-  u8x8.print(s2);
-  u8x8.print(s1);
+  if (i == 2 ) {
+    two();
+  }
+  if (i == 3 ) {
+    three();
+  }
+  if (i == 4 ) {
+    four();
+  }
+  if (i == 5 ) {
+    five();
+  }
+  if (i == 6 ) {
+    six();
+  }
+  if (i == 7 ) {
+    seven();
+  }
+  if (i == 8 ) {
+    eigth();
+  }
+  if (i == 9 ) {
+    nine();
+  }
 }
 
 void number() {
@@ -187,6 +240,7 @@ void number() {
   s1 = x;
   hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
   print_oled();
+  print_sevensegment();
 }
 
 void counter(int k) {
@@ -207,6 +261,7 @@ void counter(int k) {
     s2 = s / 10;
     s1 = s % 10;
     print_oled();
+    print_sevensegment();
   }
 }
 
@@ -219,7 +274,8 @@ void start_timer() {
     counter(-1);
     if (hms == 0){
       countown_done = true;
-      u8x8.clearDisplay();
+//      u8x8.clearDisplay();
+      leds.clear();
       digitalWrite(PIN_PA4, HIGH);
       delay(500);
       digitalWrite(PIN_PA4, LOW);
@@ -249,6 +305,87 @@ void reset_button() {
   s1 = 0;
   countown_done = false;
   reset_yes = true;
-  u8x8.clearDisplay();
+//  u8x8.clearDisplay();
   print_oled();
+  leds.clear();
+  leds.show();
+  print_sevensegment();
+}
+
+void zero(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 1,30,0,0);
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+}
+
+void one(){
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+}
+
+void two(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 1,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void three(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void four(){
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void five(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void six(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 1,30,0,0);
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void seven(){
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+}
+
+void eigth(){
+  leds.setPixelColor(start_led + 0,30,0,0);
+  leds.setPixelColor(start_led + 1,30,0,0);
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
+}
+
+void nine(){
+  leds.setPixelColor(start_led + 2,30,0,0);
+  leds.setPixelColor(start_led + 3,30,0,0);
+  leds.setPixelColor(start_led + 4,30,0,0);
+  leds.setPixelColor(start_led + 5,30,0,0);
+  leds.setPixelColor(start_led + 6,30,0,0);
 }
