@@ -1,12 +1,8 @@
-//#include <U8x8lib.h> // https://github.com/olikraus/u8g2
 #include <ezButton.h>
 #include <tinyNeoPixel.h>
 #define NUMLEDS 22
 tinyNeoPixel leds = tinyNeoPixel(NUMLEDS, PIN_PB1, NEO_GRB);
 int start_led = 0;
-
-// setup the OLED
-//U8X8_SSD1306_128X32_UNIVISION_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
 
 // Setup all Buttons
 ezButton button1(PIN_PC0);
@@ -69,11 +65,6 @@ void setup() {
   leds.begin();
   leds.clear();
   leds.show();
-  
-  // SetUp the Display
-//  u8x8.begin();
-//  u8x8.setFlipMode(0);
-//  u8x8.setFont(u8x8_font_courB24_3x4_n);
 
   // Set debounce time to 50 milliseconds for all buttons
   button1.setDebounceTime(50); 
@@ -162,30 +153,6 @@ void loop() {
   }
 }
 
-void print_oled() {
-//  u8x8.setCursor(0, 0);
-//  u8x8.setFont(u8x8_font_courB24_3x4_n);
-//  if (countown_done == true){
-//    u8x8.setCursor(1, 1);
-//    u8x8.setFont(u8x8_font_courB18_2x3_n);
-//    u8x8.print("-");
-//  }
-//  if (h2 > 0 || h1 > 0) {
-//    u8x8.setCursor(0, 1);
-//    //    u8x8.setFont(u8x8_font_7x14B_1x2_n);
-//    u8x8.setFont(u8x8_font_courB18_2x3_n);
-//    u8x8.clearDisplay();
-//    u8x8.print(h2);
-//    u8x8.print(h1);
-//    u8x8.print(":");
-//  }
-//  u8x8.print(m2);
-//  u8x8.print(m1);
-//  u8x8.print(":");
-//  u8x8.print(s2);
-//  u8x8.print(s1);
-}
-
 void print_sevensegment() {
   leds.clear();
   start_led = 0;
@@ -239,7 +206,6 @@ void number() {
   s2 = s1;
   s1 = x;
   hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
-  print_oled();
   print_sevensegment();
 }
 
@@ -260,7 +226,6 @@ void counter(int k) {
     s = ms % 60;
     s2 = s / 10;
     s1 = s % 10;
-    print_oled();
     print_sevensegment();
   }
 }
@@ -305,8 +270,6 @@ void reset_button() {
   s1 = 0;
   countown_done = false;
   reset_yes = true;
-//  u8x8.clearDisplay();
-  print_oled();
   leds.clear();
   leds.show();
   print_sevensegment();
