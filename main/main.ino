@@ -156,11 +156,11 @@ void loop() {
 void print_sevensegment() {
   leds.clear();
   start_led = 0;
-  numberTOsegment(s1);
-  start_led = 7;
-  numberTOsegment(s2);
-  start_led = 14;
   numberTOsegment(m1);
+  start_led = 7;
+  numberTOsegment(m2);
+  start_led = 14;
+  numberTOsegment(h1);
   leds.setPixelColor(21,200,0,0);
   leds.show();
 }
@@ -199,12 +199,12 @@ void numberTOsegment(int i){
 }
 
 void number() {
-  h2 = h1;
+  // h2 = h1;
   h1 = m2;
   m2 = m1;
-  m1 = s2;
-  s2 = s1;
-  s1 = x;
+  m1 = x;
+  // s2 = s1;
+  // s1 = x;
   hms = (h2 * 10 + h1) * 3600 + (m2 * 10 + m1) * 60 + s2 * 10 + s1;
   print_sevensegment();
 }
@@ -262,7 +262,7 @@ void countup() {
 void reset_button() {
   x = 0;
   hms = 0;
-  h2 = 0;
+  // h2 = 0;
   h1 = 0;
   m2 = 0;
   m1 = 0;
