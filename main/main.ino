@@ -33,7 +33,7 @@ int s = 0;
 int h = 0;
 int m = 0;
 
-// unsigned long 
+// unsigned long
 unsigned long startMillis;
 unsigned long currentMillis;
 
@@ -59,7 +59,7 @@ void setup() {
   pinConfigure(PIN_PC2, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PC3, (PIN_DIR_INPUT | PIN_PULLUP_ON));
   pinConfigure(PIN_PA4, (PIN_DIR_OUTPUT));
-  
+
   delay(100);
 
   leds.begin();
@@ -67,7 +67,7 @@ void setup() {
   leds.show();
 
   // Set debounce time to 50 milliseconds for all buttons
-  button1.setDebounceTime(50); 
+  button1.setDebounceTime(50);
   button2.setDebounceTime(50);
   button3.setDebounceTime(50);
   button4.setDebounceTime(50);
@@ -81,13 +81,13 @@ void setup() {
   buttonReset.setDebounceTime(50);
 
   // initial start time
-  startMillis = millis();  
+  startMillis = millis();
 }
 
 void loop() {
 
   // MUST call the loop() function first
-  button1.loop(); 
+  button1.loop();
   button2.loop();
   button3.loop();
   button4.loop();
@@ -132,10 +132,10 @@ void loop() {
   if (button8.isReleased()) {
     x = 8;
     number();
-  }if (button9.isReleased()) {
+  } if (button9.isReleased()) {
     x = 9;
     number();
-  }if (button0.isReleased()) {
+  } if (button0.isReleased()) {
     x = 0;
     number();
   }
@@ -161,11 +161,19 @@ void print_sevensegment() {
   numberTOsegment(m2);
   start_led = 14;
   numberTOsegment(h1);
-  leds.setPixelColor(21,200,0,0);
+  leds.setPixelColor(21, 200, 0, 0);
   leds.show();
 }
 
-void numberTOsegment(int i){
+void print_sevensegmentSec() {
+  leds.clear();
+  start_led = 0;
+  numberTOsegmentSec(s2 + 1);
+  numberTOsegment(m1);
+  leds.show();
+}
+
+void numberTOsegment(int i) {
   if (i == 0 ) {
     zero();
   }
@@ -198,6 +206,27 @@ void numberTOsegment(int i){
   }
 }
 
+void numberTOsegmentSec(int i) {
+  if (i == 1 ) {
+    oneSec();
+  }
+  if (i == 2 ) {
+    twoSec();
+  }
+  if (i == 3 ) {
+    threeSec();
+  }
+  if (i == 4 ) {
+    fourSec();
+  }
+  if (i == 5 ) {
+    fiveSec();
+  }
+  if (i == 6 ) {
+    sixSec();
+  }
+}
+
 void number() {
   // h2 = h1;
   h1 = m2;
@@ -226,7 +255,12 @@ void counter(int k) {
     s = ms % 60;
     s2 = s / 10;
     s1 = s % 10;
-    print_sevensegment();
+    if (hms < 120) {
+      print_sevensegmentSec();
+    }
+    else {
+      print_sevensegment();
+    }
   }
 }
 
@@ -237,13 +271,13 @@ void start_timer() {
       reset_button();
     }
     counter(-1);
-    if (hms == 0){
+    if (hms == 0) {
       countown_done = true;
-//      u8x8.clearDisplay();
+      //      u8x8.clearDisplay();
       leds.clear();
-      digitalWrite(PIN_PA4, HIGH);
-      delay(500);
-      digitalWrite(PIN_PA4, LOW);
+//      digitalWrite(PIN_PA4, HIGH);
+//      delay(500);
+//      digitalWrite(PIN_PA4, LOW);
       countup();
     }
   }
@@ -275,80 +309,119 @@ void reset_button() {
   print_sevensegment();
 }
 
-void zero(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 1,30,0,0);
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
+void zero() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 1, 30, 0, 0);
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
 }
 
-void one(){
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
+void one() {
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
 }
 
-void two(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 1,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void two() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 1, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void three(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void three() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void four(){
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void four() {
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void five(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void five() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void six(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 1,30,0,0);
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void six() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 1, 30, 0, 0);
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void seven(){
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
+void seven() {
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
 }
 
-void eigth(){
-  leds.setPixelColor(start_led + 0,30,0,0);
-  leds.setPixelColor(start_led + 1,30,0,0);
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void eigth() {
+  leds.setPixelColor(start_led + 0, 30, 0, 0);
+  leds.setPixelColor(start_led + 1, 30, 0, 0);
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
 }
 
-void nine(){
-  leds.setPixelColor(start_led + 2,30,0,0);
-  leds.setPixelColor(start_led + 3,30,0,0);
-  leds.setPixelColor(start_led + 4,30,0,0);
-  leds.setPixelColor(start_led + 5,30,0,0);
-  leds.setPixelColor(start_led + 6,30,0,0);
+void nine() {
+  leds.setPixelColor(start_led + 2, 30, 0, 0);
+  leds.setPixelColor(start_led + 3, 30, 0, 0);
+  leds.setPixelColor(start_led + 4, 30, 0, 0);
+  leds.setPixelColor(start_led + 5, 30, 0, 0);
+  leds.setPixelColor(start_led + 6, 30, 0, 0);
+}
+
+void oneSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+}
+
+void twoSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+  leds.setPixelColor(start_led + 13, 30, 0, 0);
+}
+
+void threeSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+  leds.setPixelColor(start_led + 13, 30, 0, 0);
+  leds.setPixelColor(start_led + 10, 30, 0, 0);
+}
+
+void fourSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+  leds.setPixelColor(start_led + 13, 30, 0, 0);
+  leds.setPixelColor(start_led + 10, 30, 0, 0);
+  leds.setPixelColor(start_led + 14, 30, 0, 0);
+}
+
+void fiveSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+  leds.setPixelColor(start_led + 13, 30, 0, 0);
+  leds.setPixelColor(start_led + 10, 30, 0, 0);
+  leds.setPixelColor(start_led + 14, 30, 0, 0);
+  leds.setPixelColor(start_led + 20, 30, 0, 0);
+}
+
+void sixSec() {
+  leds.setPixelColor(start_led + 7, 30, 0, 0);
+  leds.setPixelColor(start_led + 13, 30, 0, 0);
+  leds.setPixelColor(start_led + 10, 30, 0, 0);
+  leds.setPixelColor(start_led + 14, 30, 0, 0);
+  leds.setPixelColor(start_led + 20, 30, 0, 0);
+  leds.setPixelColor(start_led + 17, 30, 0, 0);
 }
